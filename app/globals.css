@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #0a0a0a;
+  --fg-muted: #404040;
+  --fg-subtle: #737373;
+  --border: #d4d4d4;
+  --border-strong: #0a0a0a;
+  --surface: #f5f5f5;
+  --surface-raised: #fafafa;
+  --code: #ebebeb;
+  --inverse-bg: #0a0a0a;
+  --inverse-fg: #fafafa;
+  --error-bg: #f5f5f5;
+  --error-fg: #0a0a0a;
+  --error-border: #0a0a0a;
+  --canvas-bg: #f5f5f5;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --fg: #fafafa;
+  --fg-muted: #a3a3a3;
+  --fg-subtle: #737373;
+  --border: #404040;
+  --border-strong: #fafafa;
+  --surface: #141414;
+  --surface-raised: #171717;
+  --code: #1a1a1a;
+  --inverse-bg: #fafafa;
+  --inverse-fg: #0a0a0a;
+  --error-bg: #141414;
+  --error-fg: #fafafa;
+  --error-border: #fafafa;
+  --canvas-bg: #0a0a0a;
+}
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
