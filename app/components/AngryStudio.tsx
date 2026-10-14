@@ -22,7 +22,7 @@ function CanvasPlaceholder() {
   );
 }
 
-type Status = "idle" | "scoring" | "error";
+type Status = "idle" | "scoring" | "error" | "needs_api_key";
 
 const SAMPLE_TEXTS = [
   "Just had a peaceful morning, everything feels fine.",
@@ -99,13 +99,26 @@ export default function AngryStudio() {
         signal: controller.signal,
       });
 
-      const data = (await res.json()) as { angry?: number; error?: string };
+      const data = (await res.json()) as {
+        angry?: number;
+        error?: string;
+        code?: string;
+      };
 
       if (requestId !== requestIdRef.current) return;
 
       if (!res.ok) {
-        setStatus("error");
-        setError(data.error ?? "Scoring failed");
+        const missingKey =
+          res.status === 401 ||
+          data.code === "MISSING_API_KEY" ||
+          (data.error?.toLowerCase().includes("api key") ?? false);
+        if (missingKey) {
+          setStatus("needs_api_key");
+          setError("");
+        } else {
+          setStatus("error");
+          setError(data.error ?? "Scoring failed");
+        }
         return;
       }
 
@@ -122,6 +135,16 @@ export default function AngryStudio() {
   }, [text, settings]);
 
   useDebouncedEvaluate(hydrated ? text : "", evaluate, 600);
+
+  const prevKeyRef = useRef(settings.openAiApiKey);
+  useEffect(() => {
+    const hadKey = prevKeyRef.current.trim().length > 0;
+    const hasKey = settings.openAiApiKey.trim().length > 0;
+    prevKeyRef.current = settings.openAiApiKey;
+    if (!hadKey && hasKey && status === "needs_api_key" && text.trim()) {
+      void evaluate();
+    }
+  }, [settings.openAiApiKey, status, text, evaluate]);
 
   useEffect(() => {
     let active = true;
@@ -140,11 +163,13 @@ export default function AngryStudio() {
   const statusDetail =
     status === "scoring"
       ? "scoring…"
-      : status === "error"
-        ? "error"
-        : displayScore !== null
-          ? displayScore.toFixed(2)
-          : "none";
+      : status === "needs_api_key"
+        ? "key needed"
+        : status === "error"
+          ? "failed"
+          : displayScore !== null
+            ? displayScore.toFixed(2)
+            : "none";
 
   return (
     <div className="space-y-5">
@@ -162,7 +187,11 @@ export default function AngryStudio() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <StatusBlock label="anger" detail={statusDetail} ok={displayScore !== null && status !== "error"} />
+        <StatusBlock
+          label="anger"
+          detail={statusDetail}
+          ok={displayScore !== null && status !== "error" && status !== "needs_api_key"}
+        />
         <StatusBlock label="llm" detail={status === "scoring" ? "busy" : "ready"} ok={status !== "scoring"} />
       </div>
 
@@ -233,7 +262,11 @@ export default function AngryStudio() {
 
         <div className="grid gap-3 md:grid-cols-2">
           {hydrated ? (
-            <ApiKeySection settings={settings} onChange={setSettings} />
+            <ApiKeySection
+              settings={settings}
+              onChange={setSettings}
+              showKeyGuide={status === "needs_api_key"}
+            />
           ) : (
             <div className={PANEL_CLASS} aria-hidden="true">
               <div className="border-b border-[var(--border)] pb-2">
@@ -262,7 +295,11 @@ export default function AngryStudio() {
                   style={{ width: `${(displayScore ?? 0) * 100}%` }}
                 />
               </div>
-              {error ? (
+              {status === "needs_api_key" ? (
+                <p className="mt-2 font-mono text-[10px] leading-relaxed text-[var(--fg-muted)]">
+                  Add an API key in the LLM panel — see the steps there.
+                </p>
+              ) : error ? (
                 <p className="mt-2 font-mono text-[10px] text-[var(--error-fg)]">{error}</p>
               ) : null}
             </div>

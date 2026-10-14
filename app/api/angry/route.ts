@@ -51,7 +51,10 @@ export async function POST(request: Request) {
     client = createOpenAiClient({ apiKey: openAiApiKey, provider });
   } catch (err) {
     const message = err instanceof Error ? err.message : "API key missing";
-    return NextResponse.json({ error: message }, { status: 401 });
+    return NextResponse.json(
+      { error: message, code: "MISSING_API_KEY" },
+      { status: 401 },
+    );
   }
 
   const model = resolveLlmModel(provider, llmModel);

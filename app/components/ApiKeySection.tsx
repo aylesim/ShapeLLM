@@ -80,19 +80,55 @@ export function persistLlmSettings(settings: LlmSettings) {
 type ApiKeySectionProps = {
   settings: LlmSettings;
   onChange: (next: LlmSettings) => void;
+  showKeyGuide?: boolean;
 };
 
-export default function ApiKeySection({ settings, onChange }: ApiKeySectionProps) {
+export default function ApiKeySection({
+  settings,
+  onChange,
+  showKeyGuide = false,
+}: ApiKeySectionProps) {
   const [showKey, setShowKey] = useState(false);
   const link = PROVIDER_LINKS[settings.llmProvider];
 
   return (
-    <section className={PANEL_CLASS}>
+    <section
+      className={`${PANEL_CLASS}${showKeyGuide ? " ring-2 ring-[var(--border-strong)]" : ""}`}
+      id="llm-api-key-section"
+    >
       <div className="border-b border-[var(--border)] pb-2">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--fg-subtle)]">
           LLM
         </p>
       </div>
+
+      {showKeyGuide ? (
+        <div
+          className="mt-2.5 space-y-2 rounded border border-[var(--border-strong)] bg-[var(--surface-raised)] px-2.5 py-2"
+          role="status"
+        >
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--fg)]">
+            API key needed to score text
+          </p>
+          <ol className="list-decimal space-y-1 pl-4 text-xs leading-relaxed text-[var(--fg-muted)]">
+            <li>Choose your provider (OpenAI or OpenRouter).</li>
+            <li>
+              Create a key at{" "}
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--fg)] underline decoration-[var(--border-strong)] underline-offset-2 hover:decoration-[var(--fg)]"
+              >
+                {link.label}
+              </a>
+              .
+            </li>
+            <li>Paste it in the Key field below — stored only in this browser.</li>
+            <li>Scoring runs again automatically once the key is saved.</li>
+          </ol>
+        </div>
+      ) : null}
 
       <div className="mt-2.5 space-y-2">
         <div className="flex items-center gap-2">
