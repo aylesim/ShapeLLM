@@ -171,6 +171,23 @@ export default function AngryStudio() {
             ? displayScore.toFixed(2)
             : "none";
 
+  const hasApiKey = settings.openAiApiKey.trim().length > 0;
+  const llmNeedsKey = status === "needs_api_key" || (hydrated && !hasApiKey);
+  const llmDetail =
+    status === "scoring"
+      ? "busy"
+      : llmNeedsKey
+        ? "key needed"
+        : status === "error"
+          ? "failed"
+          : "ready";
+  const llmOk =
+    hydrated &&
+    hasApiKey &&
+    status !== "scoring" &&
+    status !== "error" &&
+    status !== "needs_api_key";
+
   return (
     <div className="space-y-5">
       <div>
@@ -192,7 +209,7 @@ export default function AngryStudio() {
           detail={statusDetail}
           ok={displayScore !== null && status !== "error" && status !== "needs_api_key"}
         />
-        <StatusBlock label="llm" detail={status === "scoring" ? "busy" : "ready"} ok={status !== "scoring"} />
+        <StatusBlock label="llm" detail={llmDetail} ok={llmOk} />
       </div>
 
       <div className="space-y-3">
