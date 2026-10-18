@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-10-17T23:56:58.129Z",
+  "model": "heuristic.v1",
+  "prompt": "heuristic.v1",
+  "source": "heuristic",
+  "n": 12,
+  "mae": {
+    "valence": 0.1691,
+    "arousal": 0.183,
+    "dominance": 0.0764,
+    "tension": 0.229,
+    "warmth": 0.1921,
+    "certainty": 0.1149
+  },
+  "spearman": {
+    "valence": 0.5912,
+    "arousal": 0.1549,
+    "dominance": 0.149,
+    "tension": 0.5356,
+    "warmth": 0.4148,
+    "certainty": 0.3506
+  },
+  "latencyMs": {
+    "p50": 0,
+    "p95": 5
+  },
+  "costUsd": 0,
+  "notes": "Local baseline. Single-author targets, no held-out split. Run `pnpm eval:llm` with a key to compare a model."
+}
