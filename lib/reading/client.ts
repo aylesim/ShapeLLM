@@ -73,6 +73,19 @@ async function postScore(
   return payload;
 }
 
+const MISSING_KEY_MESSAGE =
+  "Add an API key in the Model panel to run a live reading.";
+
+function hasLiveCredentials(live: boolean, apiKey: string): boolean {
+  return live || Boolean(apiKey.trim());
+}
+
+function assertLiveCredentials(live: boolean, apiKey: string): void {
+  if (!hasLiveCredentials(live, apiKey)) {
+    throw new ReadingError(MISSING_KEY_MESSAGE, "MISSING_API_KEY", 401);
+  }
+}
+
 function requestBody(text: string, settings: LlmSettings, mode: "single" | "reading") {
   return {
     text,
@@ -91,9 +104,7 @@ export async function interpretText(
   const trimmed = text.trim();
   if (!trimmed) throw new ReadingError("Write something first.", "EMPTY_TEXT", 400);
 
-  if (!options.live && !settings.apiKey.trim()) {
-    return { data: heuristicReading(trimmed), warning: null, usedLive: false };
-  }
+  assertLiveCredentials(options.live, settings.apiKey);
 
   try {
     const payload = await postScore(
@@ -106,10 +117,7 @@ export async function interpretText(
     return { data: payload.reading, warning: null, usedLive: true };
   } catch (error) {
     if (error instanceof ReadingError) {
-      if (error.status === 400) throw error;
-      if (error.status === 401) {
-        return { data: heuristicReading(trimmed), warning: null, usedLive: false };
-      }
+      if (error.status === 400 || error.status === 401) throw error;
     }
     if (options.signal?.aborted) throw error;
     return {
@@ -128,9 +136,7 @@ export async function interpretPerformance(
   const trimmed = text.trim();
   if (!trimmed) throw new ReadingError("Write something first.", "EMPTY_TEXT", 400);
 
-  if (!options.live && !settings.apiKey.trim()) {
-    return { data: heuristicPerformance(trimmed), warning: null, usedLive: false };
-  }
+  assertLiveCredentials(options.live, settings.apiKey);
 
   try {
     const payload = await postScore(
@@ -147,14 +153,7 @@ export async function interpretPerformance(
     return { data: payload.performance, warning: null, usedLive: true };
   } catch (error) {
     if (error instanceof ReadingError) {
-      if (error.status === 400) throw error;
-      if (error.status === 401) {
-        return {
-          data: heuristicPerformance(trimmed),
-          warning: null,
-          usedLive: false,
-        };
-      }
+      if (error.status === 400 || error.status === 401) throw error;
     }
     if (options.signal?.aborted) throw error;
     return {

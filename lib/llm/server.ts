@@ -29,6 +29,7 @@ import {
 } from "./prompt";
 
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+const DEEPSEEK_BASE_URL = "https://api.deepseek.com";
 const CACHE_LIMIT = 120;
 
 const AxisValueSchema = z.object({
@@ -123,35 +124,59 @@ function cacheSet(key: string, entry: CacheEntry): void {
 
 export function hasServerKey(): boolean {
   return Boolean(
-    process.env.OPENAI_API_KEY?.trim() || process.env.OPENROUTER_API_KEY?.trim(),
+    process.env.OPENAI_API_KEY?.trim() ||
+      process.env.OPENROUTER_API_KEY?.trim() ||
+      process.env.DEEPSEEK_API_KEY?.trim(),
   );
 }
 
+function envProvider(): LlmProvider {
+  const configured = process.env.LLM_PROVIDER?.trim();
+  if (configured === "openrouter" || configured === "deepseek") return configured;
+  return "openai";
+}
+
 export function resolveProvider(requested?: string | null): LlmProvider {
-  if (requested === "openai" || requested === "openrouter") return requested;
-  return process.env.LLM_PROVIDER === "openrouter" ? "openrouter" : "openai";
+  if (
+    requested === "openai" ||
+    requested === "openrouter" ||
+    requested === "deepseek"
+  ) {
+    return requested;
+  }
+  return envProvider();
+}
+
+function providerEnvKeyName(provider: LlmProvider): string {
+  if (provider === "openrouter") return "OPENROUTER_API_KEY";
+  if (provider === "deepseek") return "DEEPSEEK_API_KEY";
+  return "OPENAI_API_KEY";
 }
 
 export function resolveModel(provider: LlmProvider, requested?: string | null): string {
   const trimmed = requested?.trim();
   if (trimmed) return trimmed;
-  const env = provider === "openrouter"
-    ? process.env.OPENROUTER_MODEL?.trim() || process.env.OPENAI_MODEL?.trim()
-    : process.env.OPENAI_MODEL?.trim();
+  const env =
+    provider === "openrouter"
+      ? process.env.OPENROUTER_MODEL?.trim() || process.env.OPENAI_MODEL?.trim()
+      : provider === "deepseek"
+        ? process.env.DEEPSEEK_MODEL?.trim()
+        : process.env.OPENAI_MODEL?.trim();
   return env || DEFAULT_MODEL[provider];
 }
 
 function resolveKey(provider: LlmProvider, requested?: string | null): string {
   const trimmed = requested?.trim();
   if (trimmed) return trimmed;
-  const env = provider === "openrouter"
-    ? process.env.OPENROUTER_API_KEY?.trim()
-    : process.env.OPENAI_API_KEY?.trim();
+  const env =
+    provider === "openrouter"
+      ? process.env.OPENROUTER_API_KEY?.trim()
+      : provider === "deepseek"
+        ? process.env.DEEPSEEK_API_KEY?.trim()
+        : process.env.OPENAI_API_KEY?.trim();
   if (!env) {
     throw new LlmError(
-      `No API key configured for ${provider}. Add a key in the model panel or set ${
-        provider === "openrouter" ? "OPENROUTER_API_KEY" : "OPENAI_API_KEY"
-      }.`,
+      `No API key configured for ${provider}. Add a key in the model panel or set ${providerEnvKeyName(provider)}.`,
       "MISSING_API_KEY",
       401,
     );
@@ -175,6 +200,10 @@ function createClient(provider: LlmProvider, apiKey: string): OpenAI {
         : {}),
       "X-OpenRouter-Title": process.env.OPENROUTER_APP_TITLE?.trim() || "ShapeLLM",
     };
+  }
+
+  if (provider === "deepseek") {
+    config.baseURL = DEEPSEEK_BASE_URL;
   }
 
   return new OpenAI(config);

@@ -21,6 +21,7 @@ type SettingsPanelProps = {
 const PROVIDER_LINKS: Record<LlmProvider, { href: string; label: string }> = {
   openai: { href: "https://platform.openai.com/api-keys", label: "platform.openai.com" },
   openrouter: { href: "https://openrouter.ai/keys", label: "openrouter.ai/keys" },
+  deepseek: { href: "https://platform.deepseek.com/api_keys", label: "platform.deepseek.com" },
 };
 
 export function SettingsPanel({
@@ -77,6 +78,7 @@ export function SettingsPanel({
           >
             <option value="openai">OpenAI</option>
             <option value="openrouter">OpenRouter</option>
+            <option value="deepseek">DeepSeek</option>
           </select>
         </div>
 
@@ -84,21 +86,7 @@ export function SettingsPanel({
           <label htmlFor="settings-model" className="settings-label">
             Model
           </label>
-          {settings.provider === "openai" ? (
-            <select
-              id="settings-model"
-              className="field select"
-              value={settings.model}
-              disabled={!hydrated}
-              onChange={(event) => onChange({ ...settings, model: event.target.value })}
-            >
-              {models.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.name}
-                </option>
-              ))}
-            </select>
-          ) : (
+          {settings.provider === "openrouter" ? (
             <>
               <input
                 id="settings-model"
@@ -117,6 +105,20 @@ export function SettingsPanel({
                 ))}
               </datalist>
             </>
+          ) : (
+            <select
+              id="settings-model"
+              className="field select"
+              value={settings.model}
+              disabled={!hydrated}
+              onChange={(event) => onChange({ ...settings, model: event.target.value })}
+            >
+              {models.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
           )}
         </div>
 

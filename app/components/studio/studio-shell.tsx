@@ -144,6 +144,7 @@ export default function StudioShell() {
 
   useEffect(() => {
     if (!hydrated || !auto) return;
+    if (!health?.live && !settings.apiKey.trim()) return;
     const trimmed = text.trim();
     if (!trimmed) return;
     if (trimmed === lastEvaluated.current) return;
@@ -160,7 +161,7 @@ export default function StudioShell() {
     }, 850);
 
     return () => window.clearTimeout(timer);
-  }, [text, auto, hydrated, evaluate]);
+  }, [text, auto, hydrated, evaluate, health?.live, settings.apiKey]);
 
   const vector = vectorFromReading(reading);
   const form = vectorToForm(vector, seedFromString(reading.id));

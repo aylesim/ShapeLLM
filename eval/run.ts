@@ -101,9 +101,10 @@ async function predict(text: string, model?: string): Promise<{ reading: Reading
     return { reading, latencyMs: performance.now() - started };
   }
 
-  const provider = (process.env.LLM_PROVIDER === "openrouter"
-    ? "openrouter"
-    : "openai") as LlmProvider;
+  const configured = process.env.LLM_PROVIDER?.trim();
+  const provider = (
+    configured === "openrouter" || configured === "deepseek" ? configured : "openai"
+  ) as LlmProvider;
   const started = performance.now();
   const result = await scoreWithLlm({
     text,

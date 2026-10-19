@@ -1,4 +1,4 @@
-export const LLM_PROVIDERS = ["openai", "openrouter"] as const;
+export const LLM_PROVIDERS = ["openai", "openrouter", "deepseek"] as const;
 
 export type LlmProvider = (typeof LLM_PROVIDERS)[number];
 
@@ -35,11 +35,16 @@ export const MODEL_OPTIONS: Record<LlmProvider, ModelOption[]> = {
       tier: "balanced",
     },
   ],
+  deepseek: [
+    { id: "deepseek-chat", name: "DeepSeek Chat", tier: "balanced" },
+    { id: "deepseek-reasoner", name: "DeepSeek Reasoner", tier: "strong" },
+  ],
 };
 
 export const DEFAULT_MODEL: Record<LlmProvider, string> = {
   openai: "gpt-4o-mini",
   openrouter: "openrouter/free",
+  deepseek: "deepseek-chat",
 };
 
 export function getDefaultModel(provider: LlmProvider): string {
@@ -47,5 +52,7 @@ export function getDefaultModel(provider: LlmProvider): string {
 }
 
 export function isLlmProvider(value: unknown): value is LlmProvider {
-  return value === "openai" || value === "openrouter";
+  return (
+    value === "openai" || value === "openrouter" || value === "deepseek"
+  );
 }

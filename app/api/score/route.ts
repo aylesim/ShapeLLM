@@ -8,7 +8,7 @@ export const maxDuration = 60;
 const RequestSchema = z.object({
   text: z.string().min(1).max(6000),
   mode: z.enum(["single", "reading"]).default("single"),
-  provider: z.enum(["openai", "openrouter"]).optional(),
+  provider: z.enum(["openai", "openrouter", "deepseek"]).optional(),
   model: z.string().max(120).optional(),
   apiKey: z.string().max(400).optional(),
 });
