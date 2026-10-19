@@ -39,7 +39,6 @@ export function BeatBlock({
       className="beat"
       data-active={active}
       data-past={past}
-      style={{ borderLeftColor: active ? "var(--accent)" : color }}
       onClick={() => onSeek(index)}
       aria-current={active ? "true" : undefined}
       aria-label={`Beat ${index + 1} of ${total}: ${LABEL_COPY[beat.label]}`}
@@ -48,11 +47,6 @@ export function BeatBlock({
         <span className="beat-index">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <span
-          className="beat-label-dot"
-          style={{ color }}
-          aria-hidden="true"
-        />
         <span className="beat-label" style={{ color }}>
           {LABEL_COPY[beat.label]}
         </span>

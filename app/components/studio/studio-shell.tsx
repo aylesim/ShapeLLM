@@ -247,11 +247,6 @@ export default function StudioShell() {
           icon="beaker"
           title="Compose"
           hint="type, paste, or pick a specimen"
-          action={
-            <span className="micro-pill">
-              {health?.live ? "live" : "local"}
-            </span>
-          }
         />
         <Composer
           text={text}
@@ -360,9 +355,8 @@ export default function StudioShell() {
             </div>
             <ProgressRing
               value={confidence}
-              size={112}
-              stroke={9}
-              gradient
+              size={96}
+              stroke={7}
               label={`${Math.round(confidence * 100)}%`}
               sublabel="confidence"
             />

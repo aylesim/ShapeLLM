@@ -71,10 +71,7 @@ export function Composer({
           aria-busy={status === "reading"}
         >
           {status === "reading" ? (
-            <>
-              <span className="source-dot" style={{ background: "var(--accent)" }} />
-              Reading…
-            </>
+            <>Reading…</>
           ) : (
             <>
               Interpret

@@ -16,7 +16,6 @@ export function SourceBadge({
   const item = COPY[source];
   return (
     <span className={`source-badge source-badge--${item.tone} ${className}`}>
-      <span className="source-dot" aria-hidden="true" />
       {item.label}
     </span>
   );

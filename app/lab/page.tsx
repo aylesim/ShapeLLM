@@ -100,7 +100,6 @@ export default async function LabPage() {
           icon="beaker"
           title="Does it actually read?"
           hint="method and evidence"
-          action={<span className="micro-pill">seed set</span>}
         />
         <div className="lab-summary-grid">
           <div className="lab-summary-copy">
@@ -193,13 +192,6 @@ export default async function LabPage() {
               {AXIS_TABLE.map((row) => (
                 <tr key={row.axis}>
                   <td>
-                    <span
-                      className="axis-dot"
-                      style={{
-                        background:
-                          AXIS_META[row.axis as keyof typeof AXIS_META].color,
-                      }}
-                    />
                     {AXIS_META[row.axis as keyof typeof AXIS_META].label}
                   </td>
                   <td>{row.reads}</td>

@@ -45,9 +45,8 @@ export function ProgressRing({
         {gradient ? (
           <defs>
             <linearGradient id={`ring-${id}`} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#5b45ec" />
-              <stop offset="55%" stopColor="#8b7cf6" />
-              <stop offset="100%" stopColor="#27a5b1" />
+              <stop offset="0%" stopColor="var(--accent)" />
+              <stop offset="100%" stopColor="var(--accent)" />
             </linearGradient>
           </defs>
         ) : null}

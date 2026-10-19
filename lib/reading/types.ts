@@ -121,7 +121,7 @@ export const AXIS_META: Record<Axis, AxisMeta> = {
     key: "valence",
     label: "Valence",
     short: "VAL",
-    color: "#9b8afb",
+    color: "#7a8499",
     low: "hostile",
     high: "warm",
   },

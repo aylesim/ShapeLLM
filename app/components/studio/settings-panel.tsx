@@ -33,7 +33,6 @@ export function SettingsPanel({
   const providerLink = PROVIDER_LINKS[settings.provider];
   const usingServerKey = Boolean(health?.live);
   const usingOwnKey = Boolean(settings.apiKey.trim());
-  const live = usingServerKey || usingOwnKey;
   const models = MODEL_OPTIONS[settings.provider];
 
   return (
@@ -49,7 +48,6 @@ export function SettingsPanel({
 
       <div className="settings-body">
         <div className="settings-status">
-          <span className="settings-status-dot" data-live={live} />
           {usingServerKey
             ? "Server key active — live readings are on"
             : usingOwnKey

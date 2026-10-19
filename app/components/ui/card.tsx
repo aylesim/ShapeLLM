@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { Icon, type IconName } from "./icons";
+import type { IconName } from "./icons";
 
 type CardProps = HTMLAttributes<HTMLElement> & {
   flush?: boolean;
@@ -14,7 +14,6 @@ export function Card({ children, className = "", flush = false, ...props }: Card
 }
 
 export function CardHeader({
-  icon,
   title,
   hint,
   action,
@@ -26,16 +25,9 @@ export function CardHeader({
 }) {
   return (
     <div className="card-header">
-      <div className="card-title-row">
-        {icon ? (
-          <span className="card-icon" aria-hidden="true">
-            <Icon name={icon} size={15} />
-          </span>
-        ) : null}
-        <div className="card-title-copy">
-          <h2 className="card-title">{title}</h2>
-          {hint ? <p className="card-hint">{hint}</p> : null}
-        </div>
+      <div className="card-title-copy">
+        <h2 className="card-title">{title}</h2>
+        {hint ? <p className="card-hint">{hint}</p> : null}
       </div>
       {action ? <div className="card-action">{action}</div> : null}
     </div>

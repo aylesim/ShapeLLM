@@ -19,7 +19,7 @@ import {
 import { downloadSpecimenCard, getStageCanvas } from "@/lib/reading/card";
 import { CURATED_PERFORMANCE } from "@/lib/reading/fixtures";
 import { seedFromString } from "@/lib/reading/form";
-import { affectToCss, formatConfidence } from "@/lib/reading/palette";
+import { affectToCss } from "@/lib/reading/palette";
 import { useLlmSettings } from "@/lib/reading/settings";
 import {
   copyToClipboard,
@@ -421,11 +421,6 @@ export default function ReadingShell() {
           icon="grid"
           title="Score"
           hint={`${performance.beats.length} beats`}
-          action={
-            <span className="micro-pill">
-              conf {formatConfidence(confidence)}
-            </span>
-          }
         />
         <div className="beats">
           {performance.beats.map((beat, index) => (
